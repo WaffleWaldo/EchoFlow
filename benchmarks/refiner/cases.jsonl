@@ -1,6 +1,6 @@
 {"input": "uh so I was gonna like tell you about the the meeting we had yesterday um with the marketing team", "expected": "I was going to tell you about the meeting we had yesterday with the marketing team.", "category": "filler_removal"}
 {"input": "yeah so basically we need to we need to update the the database schema before we can deploy", "expected": "We need to update the database schema before we can deploy.", "category": "filler_removal"}
-{"input": "so um I think I think we should probably go with the the second option because it's it's more cost effective", "expected": "I think we should go with the second option because it's more cost effective.", "category": "filler_removal"}
+{"input": "so um I think I think we should probably go with the the second option because it's it's more cost effective", "expected": "I think we should probably go with the second option because it's more cost effective.", "category": "filler_removal"}
 {"input": "can you explain how to install the app and and um set it up", "expected": "Can you explain how to install the app and set it up?", "category": "instruction_like"}
 {"input": "review how the codebase is packaged and installed", "expected": "Review how the codebase is packaged and installed.", "category": "instruction_like"}
 {"input": "um tell me about the the architecture of the system and how it works", "expected": "Tell me about the architecture of the system and how it works.", "category": "instruction_like"}
@@ -13,3 +13,18 @@
 {"input": "yeah so like basically um you know", "expected": "", "category": "edge_case"}
 {"input": "the quick brown fox jumps over the lazy dog", "expected": "The quick brown fox jumps over the lazy dog.", "category": "clean_input"}
 {"input": "so we have like three items on the list um first we need to update the API second we need to fix the the login bug and third we need to um write tests for the new feature", "expected": "We have three items on the list:\n- First, we need to update the API.\n- Second, we need to fix the login bug.\n- Third, we need to write tests for the new feature.", "category": "list_formatting"}
+{"input": "did you already push the fix to the repo", "expected": "Did you already push the fix to the repo?", "category": "question_detection"}
+{"input": "so um are we still meeting at three or should we push it", "expected": "Are we still meeting at three or should we push it?", "category": "question_detection"}
+{"input": "that works right", "expected": "That works, right?", "category": "question_detection"}
+{"input": "I wonder if we should refactor this first", "expected": "I wonder if we should refactor this first.", "category": "question_detection"}
+{"input": "what do you think about um moving the deadline to friday", "expected": "What do you think about moving the deadline to Friday?", "category": "question_detection"}
+{"input": "the tests pass now", "expected": "The tests pass now.", "category": "question_detection"}
+{"input": "I I I think we need to to look at the the logs again", "expected": "I think we need to look at the logs again.", "category": "stutter"}
+{"input": "can you can you send me the the file when you get a chance", "expected": "Can you send me the file when you get a chance?", "category": "stutter"}
+{"input": "we should we should probably start with the with the backend", "expected": "We should probably start with the backend.", "category": "stutter"}
+{"input": "it's not it's not working the way I expected it to", "expected": "It's not working the way I expected it to.", "category": "stutter"}
+{"input": "I actually like this approach better than the old one", "expected": "I actually like this approach better than the old one.", "category": "meaning_preserving"}
+{"input": "that error looks like a race condition to me", "expected": "That error looks like a race condition to me.", "category": "meaning_preserving"}
+{"input": "the demo went really well um better than I expected", "expected": "The demo went really well, better than I expected.", "category": "meaning_preserving"}
+{"input": "you know the password for the staging server right", "expected": "You know the password for the staging server, right?", "category": "meaning_preserving"}
+{"input": "um so I think this is probably fine but maybe we should double check", "expected": "I think this is probably fine, but maybe we should double check.", "category": "meaning_preserving"}
