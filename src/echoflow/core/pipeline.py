@@ -55,8 +55,10 @@ class Pipeline:
         # Services
         self._injector = Injector()
 
-        # Check Ollama connectivity at startup
-        self._refiner.check_connection()
+        # Check Ollama connectivity and warm the model (load into VRAM) at
+        # startup so the first dictation doesn't pay the cold-start penalty.
+        if self._refiner.check_connection():
+            threading.Thread(target=self._refiner.warmup, daemon=True).start()
 
     @property
     def state(self) -> State:
@@ -132,26 +134,29 @@ class Pipeline:
             # Use the window that was focused when recording started
             window = self._target_window
 
-            # Refine
+            # Refine + inject, streamed sentence-by-sentence so text lands on
+            # screen as the model generates it instead of all at the end.
             dict_context = self._dictionary.as_llm_context()
             t0 = time.perf_counter()
-            text = self._refiner.refine(
+            session = self._injector.begin_session(app_id=window["app_id"])
+            first_ms = 0.0
+            for chunk in self._refiner.refine_stream(
                 transcript,
-                app_id=window["app_id"],
-                window_title=window["title"],
                 dictionary_context=dict_context,
-            )
-            refine_ms = (time.perf_counter() - t0) * 1000
-
-            # Inject
-            t0 = time.perf_counter()
-            success = self._injector.inject(text, app_id=window["app_id"])
-            inject_ms = (time.perf_counter() - t0) * 1000
+            ):
+                if not chunk:
+                    continue
+                if first_ms == 0.0:
+                    first_ms = (time.perf_counter() - t0) * 1000
+                session.feed(chunk)
+            success = session.end()
+            refine_inject_ms = (time.perf_counter() - t0) * 1000
 
             total_ms = (time.perf_counter() - t_start) * 1000
             log.info(
-                "Pipeline complete: audio=%.1fs, transcribe=%dms, refine=%dms, inject=%dms, total=%dms",
-                audio_duration, transcribe_ms, refine_ms, inject_ms, total_ms,
+                "Pipeline complete: audio=%.1fs, transcribe=%dms, "
+                "refine+inject=%dms (first text @%dms), total=%dms",
+                audio_duration, transcribe_ms, refine_inject_ms, first_ms, total_ms,
             )
 
             if self._overlay:

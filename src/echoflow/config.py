@@ -30,7 +30,8 @@ class RefinerConfig:
     enabled: bool = True
     ollama_url: str = "http://127.0.0.1:11434"
     model: str = "echoflow-refiner"
-    temperature: float = 0.2
+    # 0 = greedy decoding: the same speech always cleans the same way
+    temperature: float = 0.0
 
 
 @dataclass

@@ -17,7 +17,7 @@ language = "en"
 enabled = true
 ollama_url = "http://127.0.0.1:11434"
 model = "echoflow-refiner"         # Build with: ollama create echoflow-refiner -f contrib/Modelfile
-temperature = 0.2
+temperature = 0.0
 
 [overlay]
 enabled = true                  # Set to false to disable the GTK4 overlay UI
