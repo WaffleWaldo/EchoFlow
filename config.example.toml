@@ -18,6 +18,7 @@ enabled = true
 ollama_url = "http://127.0.0.1:11434"
 model = "echoflow-refiner"         # Build with: ollama create echoflow-refiner -f contrib/Modelfile
 temperature = 0.0
+keep_alive = "10m"              # Idle time before Ollama unloads the model from VRAM ("-1" = never)
 
 [overlay]
 enabled = true                  # Set to false to disable the GTK4 overlay UI

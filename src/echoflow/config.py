@@ -32,6 +32,12 @@ class RefinerConfig:
     model: str = "echoflow-refiner"
     # 0 = greedy decoding: the same speech always cleans the same way
     temperature: float = 0.0
+    # How long Ollama keeps the model in VRAM after the last request
+    # (Ollama duration string; "-1" pins it forever). Each dictation resets
+    # the timer, so it only unloads after this much idle time — a finite
+    # value frees ~5 GB of VRAM for games etc. at the cost of a cold
+    # reload (a few seconds) on the first dictation after a long pause.
+    keep_alive: str = "10m"
 
 
 @dataclass

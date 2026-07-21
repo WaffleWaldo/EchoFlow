@@ -14,10 +14,6 @@ if TYPE_CHECKING:
 
 log = logging.getLogger(__name__)
 
-# Keep the model resident in VRAM forever so it never has to reload
-# between dictations (a cold reload costs several seconds).
-_KEEP_ALIVE = -1
-
 # System prompt sent with every request. Based on the prompt the LoRA
 # adapter was trained with (benchmarks/refiner/train.py), with a sharpened
 # filler rule — benchmarked at 30/30 vs 29/30 for the trained original.
@@ -75,6 +71,7 @@ class Refiner:
         self._url = config.ollama_url.rstrip("/")
         self._model = config.model
         self._temperature = config.temperature
+        self._keep_alive = config.keep_alive
 
     def check_connection(self) -> bool:
         """Check if Ollama is reachable. Logs a warning if not."""
@@ -100,13 +97,13 @@ class Refiner:
                     "model": self._model,
                     "messages": [{"role": "user", "content": "hi"}],
                     "stream": False,
-                    "keep_alive": _KEEP_ALIVE,
+                    "keep_alive": self._keep_alive,
                     "options": {"num_predict": 1},
                 },
                 timeout=120,
             )
             resp.raise_for_status()
-            log.info("Refiner warmed up (model resident in VRAM)")
+            log.info("Refiner warmed up (model loaded, keep_alive=%s)", self._keep_alive)
         except httpx.HTTPError as e:
             log.warning("Refiner warmup failed: %s", e)
 
@@ -149,7 +146,7 @@ class Refiner:
             "model": self._model,
             "messages": messages,
             "stream": True,
-            "keep_alive": _KEEP_ALIVE,
+            "keep_alive": self._keep_alive,
             "options": {
                 "temperature": self._temperature,
                 "num_predict": self._num_predict(transcript),
