@@ -55,10 +55,10 @@ class Pipeline:
         # Services
         self._injector = Injector()
 
-        # Check Ollama connectivity and warm the model (load into VRAM) at
-        # startup so the first dictation doesn't pay the cold-start penalty.
-        if self._refiner.check_connection():
-            threading.Thread(target=self._refiner.warmup, daemon=True).start()
+        # Only check Ollama connectivity at startup. The model itself is
+        # loaded lazily when a dictation starts (see _start_recording) so an
+        # idle daemon never pins VRAM — that starved games of memory.
+        self._refiner.check_connection()
 
     @property
     def state(self) -> State:
@@ -77,6 +77,10 @@ class Pipeline:
     def _start_recording(self) -> str:
         self._state = State.RECORDING
         self._target_window = get_focused_window()
+        # Warm the model while the user is speaking: a cold load overlaps
+        # recording time instead of delaying the transcript, and a warm one
+        # is a near-free request that refreshes the keep_alive countdown.
+        threading.Thread(target=self._refiner.warmup, daemon=True).start()
         if self._overlay:
             self._overlay.show_recording()
         self._recorder.start(on_chunk=self._on_audio_chunk)
